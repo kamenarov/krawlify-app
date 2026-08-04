@@ -1,0 +1,33 @@
+# dependencies
+node_modules
+
+# builds
+.next
+out
+build
+*.tsbuildinfo
+
+# environment — never commit real credentials
+.env
+.env.local
+.env.*.local
+
+# test / tooling output
+coverage
+*.log
+
+# deploy
+.vercel
+
+# generated
+next-env.d.ts
+
+# editors & OS
+.DS_Store
+Thumbs.db
+.idea
+.vscode/*
+!.vscode/extensions.json
+
+# Claude Code — the skill is shared, local settings are not
+.claude/settings.local.json

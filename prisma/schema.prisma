@@ -1,0 +1,268 @@
+// Prisma schema for the SEO crawler & audit platform.
+// Datastore: PostgreSQL. All crawl-scoped tables carry crawlId + indexes so the
+// worker can stream rows in on the fly and the API can paginate/filter cheaply.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CrawlStatus {
+  queued
+  running
+  paused
+  done
+  failed
+  stopped
+}
+
+enum UserRole {
+  admin
+  member
+}
+
+enum AssetType {
+  img
+  script
+  stylesheet
+  api
+  other
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String?
+  role         UserRole @default(member)
+  disabled     Boolean  @default(false)
+  defaultUserAgent String?
+  createdAt    DateTime @default(now())
+  crawls       Crawl[]
+  apiKeys      ApiKey[]
+}
+
+// Personal access tokens for the programmatic /api/v1 endpoints. Only the SHA-256
+// hash is stored; the plaintext key is shown to the user exactly once at creation.
+model ApiKey {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  prefix     String // display only, e.g. "crwl_AbC12dEf"
+  keyHash    String    @unique
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model Crawl {
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  seedUrl    String
+  rootHost   String
+  status     CrawlStatus @default(queued)
+
+  // Optional URL POSTed once when the crawl reaches a terminal state.
+  webhookUrl       String?
+  webhookDelivered Boolean @default(false)
+
+  // Crawl configuration (see CrawlConfig type in src/lib/events.ts)
+  config Json
+
+  // Live/rollup counters (kept current by the worker)
+  totalFound    Int  @default(0)
+  totalCrawled  Int  @default(0)
+  byStatusClass Json @default("{}") // { "2": n, "3": n, "4": n, "5": n, "0": n }
+  error         String?
+
+  createdAt  DateTime  @default(now())
+  startedAt  DateTime?
+  finishedAt DateTime?
+
+  pages     Page[]
+  links     Link[]
+  redirects Redirect[]
+  assets    Asset[]
+  issues    Issue[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Page {
+  id      String @id @default(cuid())
+  crawlId String
+  crawl   Crawl  @relation(fields: [crawlId], references: [id], onDelete: Cascade)
+
+  url        String
+  urlHash    String
+  isInternal Boolean @default(true)
+  depth      Int     @default(0)
+
+  // Response
+  statusCode      Int?
+  statusClass     Int     @default(0) // 2,3,4,5 or 0 (no response)
+  contentType     String?
+  responseTimeMs  Int?
+  sizeBytes       Int?
+
+  // Indexability
+  indexability       String? // indexable | noindex | canonicalised | non-indexable
+  indexabilityReason String?
+
+  // Titles
+  title          String?
+  titleLength    Int?
+  titlePixelWidth Int?
+  titleHash      String?
+  titleCount     Int     @default(0)
+  titleIssues    String[] @default([])
+
+  // Meta description
+  metaDescription     String?
+  metaDescLength      Int?
+  metaDescPixelWidth  Int?
+  metaDescHash        String?
+  metaDescCount       Int     @default(0)
+  metaIssues          String[] @default([])
+
+  // Headings (H1–H6)
+  h1       String[] @default([])
+  h1Count  Int      @default(0)
+  h1Hash   String?
+  h1Issues String[] @default([])
+  h2       String[] @default([])
+  h2Count  Int      @default(0)
+  h3       String[] @default([])
+  h3Count  Int      @default(0)
+  h4       String[] @default([])
+  h4Count  Int      @default(0)
+  h5       String[] @default([])
+  h5Count  Int      @default(0)
+  h6       String[] @default([])
+  h6Count  Int      @default(0)
+
+  // Directives
+  canonicalUrl     String?
+  canonicalMismatch Boolean @default(false)
+  metaRobots       String?
+  xRobotsTag       String?
+
+  // Publish/modified dates: from JSON-LD structured data + sitemap <lastmod>.
+  datePublished  DateTime?
+  dateModified   DateTime?
+  sitemapLastmod DateTime?
+
+  wordCount      Int     @default(0)
+  foundViaSitemap Boolean @default(false)
+  inlinkCount    Int     @default(0)
+  isOrphan       Boolean @default(false)
+
+  crawledAt DateTime @default(now())
+
+  outlinks Link[] @relation("PageOutlinks")
+  assets   Asset[]
+
+  @@unique([crawlId, url])
+  @@index([crawlId, statusClass])
+  @@index([crawlId, isInternal])
+  @@index([crawlId, foundViaSitemap])
+  @@index([crawlId, titleHash])
+  @@index([crawlId, metaDescHash])
+  @@index([crawlId, h1Hash])
+  @@index([crawlId, isOrphan])
+}
+
+model Link {
+  id           String  @id @default(cuid())
+  crawlId      String
+  crawl        Crawl   @relation(fields: [crawlId], references: [id], onDelete: Cascade)
+  sourcePageId String
+  sourcePage   Page    @relation("PageOutlinks", fields: [sourcePageId], references: [id], onDelete: Cascade)
+  sourceUrl    String
+  targetUrl    String
+  targetHash   String
+  anchorText   String?
+  rel          String?
+  target       String? // raw target attribute, e.g. "_blank"
+  nofollow     Boolean @default(false)
+  isBlank      Boolean @default(false) // target="_blank"
+  isInternal   Boolean @default(true)
+
+  @@index([crawlId, targetHash])
+  @@index([crawlId, nofollow])
+  @@index([crawlId, isBlank])
+  @@index([sourcePageId])
+}
+
+model Redirect {
+  id            String @id @default(cuid())
+  crawlId       String
+  crawl         Crawl  @relation(fields: [crawlId], references: [id], onDelete: Cascade)
+  sourceUrl     String
+  statusCode    Int
+  targetUrl     String
+  chainPosition Int    @default(0)
+  finalUrl      String?
+  finalStatus   Int?
+  hops          Int    @default(1)
+
+  @@index([crawlId])
+}
+
+model Asset {
+  id         String    @id @default(cuid())
+  crawlId    String
+  crawl      Crawl     @relation(fields: [crawlId], references: [id], onDelete: Cascade)
+  pageId     String? // referring page
+  page       Page?     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  referrerUrl String?
+  url        String
+  urlHash    String
+  type       AssetType @default(other)
+
+  statusCode  Int?
+  statusClass Int     @default(0)
+  sizeBytes   Int?
+  isBroken    Boolean @default(false)
+
+  // Image-specific
+  altText   String?
+  altLength Int?
+  altIssues String[] @default([])
+
+  @@index([crawlId, type, statusClass])
+  @@index([crawlId, isBroken])
+  @@index([crawlId, urlHash])
+}
+
+// Persisted browser session (cookies + localStorage) per target domain, so a cleared
+// Cloudflare session (cf_clearance) can be restored on the next crawl instead of
+// re-triggering the challenge. Keyed by host; shared across crawls.
+model BrowserSession {
+  id           String   @id @default(cuid())
+  domain       String   @unique
+  storageState Json
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Incremental issue rollup powering the sidebar summary without scanning Page.
+model Issue {
+  id       String @id @default(cuid())
+  crawlId  String
+  crawl    Crawl  @relation(fields: [crawlId], references: [id], onDelete: Cascade)
+  category String // e.g. "titles.missing", "images.altMissing"
+  severity String @default("warning") // error | warning | notice
+  count    Int    @default(0)
+
+  @@unique([crawlId, category])
+  @@index([crawlId])
+}

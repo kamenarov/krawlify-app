@@ -1,0 +1,82 @@
+{
+  "name": "krawlify",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Self-hosted SEO crawler and audit platform with a REST API and an MCP server.",
+  "keywords": [
+    "seo",
+    "crawler",
+    "site-audit",
+    "broken-links",
+    "sitemap",
+    "mcp",
+    "model-context-protocol",
+    "playwright",
+    "nextjs"
+  ],
+  "homepage": "https://krawlify.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kamenarov/krawlify-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kamenarov/krawlify-app/issues"
+  },
+  "author": "Yordan Kamenarov <yordan@kamenarov.dev> (https://kamenarov.dev)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "worker": "tsx watch worker/index.ts",
+    "worker:start": "tsx worker/index.ts",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:seed": "tsx prisma/seed.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0",
+    "@tanstack/react-virtual": "^3.11.2",
+    "bcryptjs": "^2.4.3",
+    "bullmq": "^5.34.0",
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
+    "fast-xml-parser": "^4.5.1",
+    "ioredis": "^5.4.2",
+    "next": "^15.5.19",
+    "next-auth": "^4.24.11",
+    "p-limit": "^6.2.0",
+    "playwright": "^1.49.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "recharts": "^2.15.0",
+    "robots-parser": "^3.0.1",
+    "undici": "^7.2.3",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^22.10.5",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "prisma": "^5.22.0",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.8"
+  }
+}

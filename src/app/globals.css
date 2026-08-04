@@ -1,0 +1,316 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+/*
+ * html keeps a fixed height so the body's `min-h-full` (see the root layout) has
+ * something to resolve against — that is what pins the footer to the bottom of the
+ * viewport on short pages. The body itself must NOT be height:100%, or tall pages
+ * would overflow past it and the footer would land mid-content.
+ */
+html {
+  height: 100%;
+}
+
+body {
+  @apply bg-gray-50 text-gray-900 antialiased;
+}
+
+/* Compact data-grid feel */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===========================================================================
+   Krawlify brand layer — kamenarov.dev's palette.
+
+   violet #8b5cf6 → purple #a855f7, on near-black #101019 / #15141f, with
+   #ececf1 text and #8a8a97 muted. Same colours the Krawlify browser extension
+   wears, so the two products read as one.
+
+   The UI is built from a small, consistent set of Tailwind utilities, so rather
+   than rewriting every component the palette is remapped once, here. Two parts:
+   this brand layer swaps the stock blue accent for the brand violet in BOTH
+   themes, and the dark layer below re-skins the neutrals. Anything added later
+   inherits both for free as long as it stays on the same utilities.
+
+   Specificity note: these are single-class selectors matching Tailwind's own, so
+   they win on source order — this file's custom CSS is emitted after
+   `@tailwind utilities`. The `.dark`-scoped rules further down outrank both.
+   ======================================================================== */
+
+/* --- Accent: primary actions --- */
+.bg-blue-600 {
+  background-color: #8b5cf6;
+}
+.hover\:bg-blue-700:hover {
+  background-color: #7c46f0;
+}
+.border-blue-600 {
+  border-color: #8b5cf6;
+}
+
+/* --- Accent: links and inline emphasis --- */
+.text-blue-600 {
+  color: #7c3aed;
+}
+.text-blue-700 {
+  color: #6d28d9;
+}
+.text-blue-800 {
+  color: #5b21b6;
+}
+
+/* --- Accent: tinted surfaces (callouts, active rows, badges) --- */
+.bg-blue-50 {
+  background-color: #f5f1ff;
+}
+.bg-blue-100 {
+  background-color: #ede4ff;
+}
+.hover\:bg-blue-50:hover {
+  background-color: #f5f1ff;
+}
+.hover\:bg-blue-50\/40:hover {
+  background-color: rgba(139, 92, 246, 0.07);
+}
+
+/* ---------------------------------------------------------------------------
+   Dark theme.
+
+   Surfaces, text and borders are kamenarov.dev's: #101019 page, #15141f card,
+   #ececf1 text, #8a8a97 muted, hairline borders at 7% white. The accent moves
+   up the ramp to purple #a855f7, which is what the site uses for links on dark.
+   ------------------------------------------------------------------------ */
+
+.dark {
+  color-scheme: dark;
+}
+
+/* Default border colour (bare `border`, `border-b`, `divide-y`, …) */
+.dark *,
+.dark ::before,
+.dark ::after {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* --- Surfaces --- */
+.dark body {
+  background-color: #101019;
+  color: #ececf1;
+}
+.dark .bg-white {
+  background-color: #15141f;
+}
+.dark .bg-gray-50 {
+  background-color: #131220;
+}
+.dark .bg-gray-100 {
+  background-color: #1d1b2b;
+}
+.dark .bg-gray-200 {
+  background-color: #262336;
+}
+.dark .bg-gray-800 {
+  background-color: #332f45;
+}
+.dark .bg-gray-900 {
+  background-color: #0b0a12;
+}
+.dark .bg-black {
+  background-color: #000;
+}
+
+/* --- Text --- */
+.dark .text-gray-900 {
+  color: #ececf1;
+}
+.dark .text-gray-700 {
+  color: #c9c9d3;
+}
+.dark .text-gray-600 {
+  color: #a6a6b3;
+}
+.dark .text-gray-500 {
+  color: #8a8a97;
+}
+.dark .text-gray-400 {
+  color: #6f6f7d;
+}
+
+/* --- Borders --- */
+.dark .border-gray-200 {
+  border-color: rgba(255, 255, 255, 0.07);
+}
+.dark .border-gray-300 {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+/* --- Accent on dark --- */
+.dark .bg-blue-600 {
+  background-color: #8b5cf6;
+}
+.dark .hover\:bg-blue-700:hover {
+  background-color: #a855f7;
+}
+.dark .border-blue-600 {
+  border-color: #a855f7;
+}
+.dark .text-blue-600 {
+  color: #a855f7;
+}
+.dark .text-blue-700 {
+  color: #bd82fa;
+}
+.dark .text-blue-800 {
+  color: #cfa6fc;
+}
+.dark .bg-blue-50 {
+  background-color: rgba(139, 92, 246, 0.14);
+}
+.dark .bg-blue-100 {
+  background-color: rgba(139, 92, 246, 0.24);
+}
+.dark .hover\:bg-blue-50:hover {
+  background-color: rgba(139, 92, 246, 0.2);
+}
+.dark .hover\:bg-blue-50\/40:hover {
+  background-color: rgba(139, 92, 246, 0.12);
+}
+
+/* --- Status colours: the extension's ok/warn/bad, hue kept, luminance dropped --- */
+.dark .bg-red-50 {
+  background-color: rgba(224, 87, 107, 0.13);
+}
+.dark .bg-red-100 {
+  background-color: rgba(224, 87, 107, 0.22);
+}
+.dark .border-red-300 {
+  border-color: rgba(224, 87, 107, 0.45);
+}
+.dark .text-red-600 {
+  color: #e0576b;
+}
+.dark .text-red-700 {
+  color: #ef8394;
+}
+
+.dark .bg-green-50 {
+  background-color: rgba(61, 220, 132, 0.12);
+}
+.dark .bg-green-100 {
+  background-color: rgba(61, 220, 132, 0.2);
+}
+.dark .border-green-300 {
+  border-color: rgba(61, 220, 132, 0.42);
+}
+.dark .text-green-600 {
+  color: #3ddc84;
+}
+.dark .text-green-700 {
+  color: #6ce6a3;
+}
+.dark .text-green-800 {
+  color: #96eebd;
+}
+
+.dark .bg-yellow-100 {
+  background-color: rgba(255, 189, 46, 0.2);
+}
+.dark .text-yellow-700 {
+  color: #ffbd2e;
+}
+
+.dark .bg-orange-100 {
+  background-color: rgba(255, 147, 46, 0.2);
+}
+.dark .text-orange-600 {
+  color: #ff932e;
+}
+.dark .text-orange-700 {
+  color: #ffae63;
+}
+
+.dark .bg-amber-50 {
+  background-color: rgba(255, 189, 46, 0.1);
+}
+.dark .border-amber-200 {
+  border-color: rgba(255, 189, 46, 0.28);
+}
+.dark .text-amber-600 {
+  color: #ffbd2e;
+}
+
+.dark .bg-purple-50 {
+  background-color: rgba(168, 85, 247, 0.14);
+}
+.dark .bg-purple-100 {
+  background-color: rgba(168, 85, 247, 0.24);
+}
+.dark .border-purple-200 {
+  border-color: rgba(168, 85, 247, 0.38);
+}
+.dark .text-purple-700 {
+  color: #c79bf5;
+}
+.dark .text-purple-800 {
+  color: #d4b3f7;
+}
+
+/* --- Hover states --- */
+.dark .hover\:bg-gray-50:hover {
+  background-color: #1a1826;
+}
+.dark .hover\:bg-gray-100:hover {
+  background-color: #211f30;
+}
+.dark .hover\:bg-gray-200:hover {
+  background-color: #2a2739;
+}
+.dark .hover\:bg-green-700:hover {
+  background-color: #2fbf6e;
+}
+.dark .hover\:bg-red-50:hover {
+  background-color: rgba(224, 87, 107, 0.18);
+}
+.dark .hover\:text-gray-700:hover {
+  color: #d6d6de;
+}
+.dark .hover\:text-gray-800:hover {
+  color: #ececf1;
+}
+
+/* --- Form controls (styled with `border` only, no explicit background) --- */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #121120;
+  color: #ececf1;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+.dark ::placeholder {
+  color: #6f6f7d;
+}
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: #8b5cf6;
+}
+.dark option {
+  background-color: #15141f;
+  color: #ececf1;
+}
+
+/* Recharts draws white separators between pie sectors and an inline white tooltip */
+.dark .recharts-sector {
+  stroke: #15141f;
+}
+.dark .recharts-default-tooltip {
+  background-color: #1d1b2b !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #ececf1;
+}

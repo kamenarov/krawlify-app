@@ -1,0 +1,66 @@
+name: Bug report
+description: Something behaves differently than documented
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before filing: if this is a **security** issue, do not open an issue — see
+        [SECURITY.md](../blob/main/SECURITY.md) instead.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you expected, and what you got instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: |
+        The seed URL and crawl settings matter more than anything else here. If the site
+        is private, a public site that shows the same behaviour is just as useful.
+      placeholder: |
+        1. New crawl, seedUrl https://example.com, maxUrls 50
+        2. …
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Worker output
+      description: |
+        `docker compose logs worker` around the failure. Redact any browser tokens or
+        proxy credentials — they appear in connection errors.
+      render: shell
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: How are you running it
+      options:
+        - Docker Compose (full stack)
+        - Local dev (npm run dev + npm run worker)
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: v0.1.0, or the commit SHA
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: botprotection
+    attributes:
+      label: Was the bot-protection bypass involved?
+      options:
+        - label: The crawl had `bypassBotProtection` enabled
+        - label: The crawl had `waitForBotCheck` enabled

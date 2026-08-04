@@ -1,0 +1,41 @@
+name: Feature request
+description: Suggest a capability or a change to an existing one
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do
+      description: The audit or workflow you are stuck on, not the implementation you have in mind.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would solve it
+      description: If you have a shape in mind — a new tab, a filter, an API field, an MCP tool — describe it.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part
+      options:
+        - Crawl engine
+        - Result tabs / filters / export
+        - REST API
+        - MCP server
+        - Bot-protection bypass
+        - UI / theming
+        - Deployment
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you tried instead
+      description: Existing tabs, filters or API calls that nearly work, and where they fall short.
