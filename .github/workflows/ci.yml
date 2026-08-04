@@ -98,6 +98,10 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      # DOCKERHUB.md, not README.md: the README is written for someone reading the repo
+      # (project layout, contributing, development setup), and it is over Docker Hub's
+      # 25,000-byte limit anyway. The registry page wants the tags, a compose file and the
+      # environment variables.
       - name: Update Docker Hub description
         if: github.event_name != 'pull_request'
         uses: peter-evans/dockerhub-description@v4
@@ -106,7 +110,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: kamenarov/krawlify-app
-          readme-filepath: ./README.md
+          readme-filepath: ./DOCKERHUB.md
+          short-description: "Self-hosted SEO crawler and audit platform with a REST API and an MCP server."
 
   # Cutting a release is `git tag v1.2.3 && git push origin v1.2.3` — everything below is
   # automatic. It runs after docker on purpose: a release whose image failed to publish
