@@ -4,7 +4,10 @@ All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] — 0.1.0
+A version's section is lifted verbatim into its GitHub release, so keep the heading in the
+`## [1.2.3]` form the release job matches on.
+
+## [0.1.0]
 
 First release. Everything is new, so there is nothing to compare against; later entries
 will use the usual Added / Changed / Fixed sections.
@@ -50,5 +53,5 @@ will use the usual Added / Changed / Fixed sections.
 - `docker compose up --build` brings up Postgres, Redis, migrations, the web app and the
   worker together.
 
-<!-- The compare link only resolves once v0.1.0 is tagged. -->
 [Unreleased]: https://github.com/kamenarov/krawlify-app/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/kamenarov/krawlify-app/releases/tag/v0.1.0

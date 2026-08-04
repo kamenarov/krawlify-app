@@ -81,6 +81,26 @@ npx prisma migrate dev --name what_changed
 Commit the generated migration directory. The `migrate` service applies migrations on
 startup, so a PR without one will break `docker compose up` for everyone else.
 
+## Releasing
+
+Tagging is the whole process — CI does the rest:
+
+```bash
+# 1. Move the CHANGELOG's [Unreleased] work under a "## [1.2.3]" heading, commit it.
+# 2. Tag and push.
+git tag v1.2.3
+git push origin v1.2.3
+```
+
+That publishes the Docker image as `:1.2.3`, `:1.2`, `:1` and `:latest`, and opens a
+GitHub release whose notes are that CHANGELOG section — so keep the heading in the
+`## [1.2.3]` form the workflow matches on. Without a section it falls back to generated
+commit notes rather than failing. A tag with a hyphen (`v1.2.3-rc.1`) is marked a
+pre-release and does **not** move `:latest`.
+
+`main` itself only ever publishes `:edge`. Nothing is published unless the typecheck,
+tests and build pass first.
+
 ## Commit messages and PRs
 
 No strict format. A subject line that says what changed and a body that says why is enough.

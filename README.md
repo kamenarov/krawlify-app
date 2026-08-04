@@ -61,10 +61,13 @@ docker pull kamenarov/krawlify-app:edge     # or a release tag, e.g. :0.1.0
 IMAGE=kamenarov/krawlify-app:edge docker compose up -d
 ```
 
-`:edge` is built from `main` on every green CI run; version tags come from `v*` git tags
-and follow semver (`:0.1.0`, `:0.1`, `:0`). Both `linux/amd64` and `linux/arm64` are
-published. The image carries the web app, the worker and the migration step — compose runs
-the same one three times with different commands.
+`:edge` is built from `main` on every green CI run. Releases come from `v*` git tags and
+publish `:1.2.3`, `:1.2`, `:1` and `:latest`, alongside a
+[GitHub release](https://github.com/kamenarov/krawlify-app/releases) carrying that
+version's changelog — so `:latest` is always something that was deliberately cut, never
+just the newest commit. Use `:edge` if you want the newest commit. Both `linux/amd64` and
+`linux/arm64` are published. The image carries the web app, the worker and the migration
+step — compose runs the same one three times with different commands.
 
 ### Local development (hot reload)
 
