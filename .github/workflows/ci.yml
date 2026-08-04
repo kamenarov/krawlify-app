@@ -62,7 +62,7 @@ jobs:
       # and Graviton hosts; not worth it on every pull request, which builds amd64 only.
       - uses: docker/setup-qemu-action@v3
         if: github.event_name != 'pull_request'
-      - uses: docker/setup-buildx-action@v3
+      - uses: docker/setup-buildx-action@v4
 
       # Pull requests from forks cannot read secrets, and an unreviewed PR should not be
       # able to publish anyway — those runs build the image and throw it away.
