@@ -88,7 +88,7 @@ jobs:
           # `auto` also keeps it off pre-releases (v1.0.0-rc.1).
           flavor: latest=auto
 
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         with:
           context: .
           platforms: ${{ github.event_name == 'pull_request' && 'linux/amd64' || 'linux/amd64,linux/arm64' }}
