@@ -2,7 +2,7 @@
 # Prisma's default engine + OpenSSL "just work", and ca-certificates are present for
 # the crawler's outbound HTTPS fetches. Multi-stage to cache the dependency install.
 
-FROM node:20-bookworm-slim AS base
+FROM node:26-bookworm-slim AS base
 RUN apt-get update \
   && apt-get install -y --no-install-recommends openssl ca-certificates \
   && rm -rf /var/lib/apt/lists/*
