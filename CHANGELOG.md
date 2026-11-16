@@ -7,6 +7,14 @@ All notable changes to this project are documented here. The format is based on
 A version's section is lifted verbatim into its GitHub release, so keep the heading in the
 `## [1.2.3]` form the release job matches on.
 
+## [0.1.1]
+
+### Changed
+
+- **Kept out of search engines** — every page now carries `<meta name="robots"
+  content="noindex, nofollow">`, and every response (API and exports included) sends
+  `X-Robots-Tag: noindex, nofollow`, so a publicly reachable instance is not indexed.
+
 ## [0.1.0]
 
 First release. Everything is new, so there is nothing to compare against; later entries

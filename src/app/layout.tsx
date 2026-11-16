@@ -8,6 +8,8 @@ import { PRODUCT_DESCRIPTION, PRODUCT_NAME, PRODUCT_TAGLINE } from "@/lib/brand"
 export const metadata: Metadata = {
   title: `${PRODUCT_NAME} — ${PRODUCT_TAGLINE}`,
   description: PRODUCT_DESCRIPTION,
+  // A self-hosted, logged-in tool: nothing here belongs in a search index.
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
